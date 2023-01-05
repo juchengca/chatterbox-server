@@ -46,6 +46,17 @@ var requestHandler = function(request, response) {
   // If valid POST request
   if ((request.url === '/classes/messages') && (request.method === 'POST')) {
     statusCode = 201;
+    const body = [];
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+    request.on('end', () => {
+      const concatenatedData = Buffer.concat(body);
+      console.log(concatenatedData);
+      const stringifiedData = concatenatedData.toString();
+      console.log('stringifiedData: ', stringifiedData);
+      messages.push(JSON.parse(stringifiedData));
+    });
   }
 
 
