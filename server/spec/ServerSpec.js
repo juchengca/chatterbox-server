@@ -91,4 +91,48 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+  it('Should add message ID', function() {
+    var stubMsg = {
+      username: 'Jono',
+      text: 'Do my bidding!'
+    };
+    // POST
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+    handler.requestHandler(req, res);
+    expect(res._responseCode).to.equal(201);
+
+    // GET BACK
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data);
+    expect(messages[0].message_id).to.be.above(-1);
+
+  });
+
+  it('Should handle OPTIONS requests', function() {
+    req = new stubs.request('/classes/messages', 'OPTIONS');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+    expect(res._responseCode).to.equal(200);
+
+  });
+
+  it('Should handle empty POST request', function() {
+    var stubMsg = {
+      username: '',
+      text: ''
+    };
+    // POST
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+    handler.requestHandler(req, res);
+    expect(res._responseCode).to.equal(204);
+
+  });
+
 });
