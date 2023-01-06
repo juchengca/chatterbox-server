@@ -7,6 +7,7 @@ describe('server', function() {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       expect(response.statusCode).to.equal(200);
       done();
+      console.log('done: ', done.toString());
     });
   });
 
@@ -65,5 +66,20 @@ describe('server', function() {
     });
   });
 
+  /*
+  it('Shouldn\'t take more than 3 seconds', function(done) {
+    request('http://127.0.0.1:3000/classes/message', function(error, response, body) {
+      setTimeout(() => { expect(response.statusCode).to.equal(404); }, 3000 );
+      done();
+    });
+  });
+  // Send a get request
+
+  // Start a timer
+
+  // If the request returns a response, test passes (call done?)
+
+  // If the timer is up, test fails
+*/
 
 });

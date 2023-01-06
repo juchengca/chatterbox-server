@@ -8,6 +8,9 @@ var Parse = {
       url: Parse.server,
       type: 'POST',
       data: JSON.stringify(message),
+      headers: {
+        Authorization: API_KEY
+      },
       contentType: 'application/json',
       success: successCB,
       error: errorCB || function (error) {

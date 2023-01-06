@@ -26,6 +26,8 @@ pids
 logs
 results
 
+### API KEY ###
+config.js
 
 ### NPM ###
 npm-debug.log

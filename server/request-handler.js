@@ -1,3 +1,5 @@
+var API_KEY = require('./config.js');
+
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -15,6 +17,7 @@ var messages = [];
 var id = 0;
 
 var requestHandler = function(request, response) {
+  console.log('request: ', request.headers.authorization);
   // Request and Response come from node's http module.
   //console.log('request obj: ', request);
   //
@@ -35,39 +38,42 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
   var statusCode = 404;
-  // If invalid request
-  // if (!(request.url === '/classes/messages')) {
-  //   statusCode = 404;
-  // }
-  // If valid GET request
-  if ((request.url === '/classes/messages') && (request.method === 'OPTIONS')) {
-    statusCode = 200;
+  debugger;
+  console.log('request auth: ', request.headers.authorization);
+  console.log('method: ', request.method);
+  if ((request.headers.authorization !== API_KEY) && (request.method !== 'OPTIONS')) {
+    console.log('Access Denied: No API Key');
+    //response.end();
+  } else {
+    // If valid GET request
+    if ((request.url === '/classes/messages') && (request.method === 'OPTIONS')) {
+      statusCode = 200;
+    }
+    if ((request.url === '/classes/messages') && (request.method === 'GET')) {
+      statusCode = 200;
+      thingThatGetsSentBack = JSON.stringify(messages);
+    }
+    // If valid POST request
+    if ((request.url === '/classes/messages') && (request.method === 'POST')) {
+      statusCode = 201;
+      const body = [];
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        const concatenatedData = Buffer.concat(body);
+        const stringifiedData = concatenatedData.toString();
+        var objectData = JSON.parse(stringifiedData);
+        if (objectData.username === '' || objectData.text === '') {
+          statusCode = 204;
+        } else {
+          objectData['message_id'] = id;
+          messages.push(objectData);
+          id++;
+        }
+      });
+    }
   }
-  if ((request.url === '/classes/messages') && (request.method === 'GET')) {
-    statusCode = 200;
-    thingThatGetsSentBack = JSON.stringify(messages);
-  }
-  // If valid POST request
-  if ((request.url === '/classes/messages') && (request.method === 'POST')) {
-    statusCode = 201;
-    const body = [];
-    request.on('data', (chunk) => {
-      body.push(chunk);
-    });
-    request.on('end', () => {
-      const concatenatedData = Buffer.concat(body);
-      const stringifiedData = concatenatedData.toString();
-      var objectData = JSON.parse(stringifiedData);
-      if (objectData.username === '' || objectData.text === '') {
-        statusCode = 204;
-      } else {
-        objectData['message_id'] = id;
-        messages.push(objectData);
-        id++;
-      }
-    });
-  }
-
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;

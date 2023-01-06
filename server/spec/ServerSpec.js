@@ -1,6 +1,7 @@
 var handler = require('../request-handler');
 var expect = require('chai').expect;
 var stubs = require('./Stubs');
+var API_KEY = require('../config');
 
 describe('Node Server Request Listener Function', function() {
   it('Should answer GET requests for /classes/messages with a 200 status code', function() {
@@ -132,6 +133,23 @@ describe('Node Server Request Listener Function', function() {
     var res = new stubs.response();
     handler.requestHandler(req, res);
     expect(res._responseCode).to.equal(204);
+  });
+
+  it('Should pass for correct API key', function() {
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+    expect(res.headers.authorization).to.equal(API_KEY);
+
+  });
+
+  it('Should fail for incorrect API key', function() {
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+    expect(res.headers.authorization).to.equal(API_KEY);
 
   });
 
