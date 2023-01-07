@@ -22,6 +22,9 @@ module.exports = {
     this.url = url;
     this.method = method;
     this._postData = postdata;
+    // Added
+    //  headers['Content-Type'] = 'application/json';
+    this._headers = {'Content-Type': 'application/json'};
     this.setEncoding = function() { /* noop */ };
 
     this.addListener = this.on = function(type, callback) {

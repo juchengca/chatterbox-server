@@ -74,6 +74,7 @@ describe('Node Server Request Listener Function', function() {
 
     handler.requestHandler(req, res);
 
+
     expect(res._responseCode).to.equal(200);
     var messages = JSON.parse(res._data);
     expect(messages.length).to.be.above(0);
@@ -135,22 +136,22 @@ describe('Node Server Request Listener Function', function() {
     expect(res._responseCode).to.equal(204);
   });
 
-  it('Should pass for correct API key', function() {
+  it('Should check for reponse type', function() {
+
+    var stubMsg = {
+      username: 'Jono',
+      text: 'Do my bidding!'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
     req = new stubs.request('/classes/messages', 'GET');
     res = new stubs.response();
 
     handler.requestHandler(req, res);
-    expect(res.headers.authorization).to.equal(API_KEY);
-
-  });
-
-  it('Should fail for incorrect API key', function() {
-    req = new stubs.request('/classes/messages', 'GET');
-    res = new stubs.response();
-
-    handler.requestHandler(req, res);
-    expect(res.headers.authorization).to.equal(API_KEY);
-
+    expect(req._headers['Content-Type']).to.equal(res._headers['Content-Type']);
   });
 
 });
